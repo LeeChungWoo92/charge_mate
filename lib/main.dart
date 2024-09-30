@@ -1,3 +1,4 @@
+import 'package:charge_mate/router/router.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,14 +10,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return MaterialApp.router(
+      routerConfig: router,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-      ),
-      home: const Scaffold(
-        body: Text('메인'),
       ),
     );
   }
