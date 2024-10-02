@@ -14,7 +14,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     ChargingMapScreen(),
-    Allmenuscreen(),
+    AllMenuScreen(),
   ];
 
   void _onItemTapped(int index) {
