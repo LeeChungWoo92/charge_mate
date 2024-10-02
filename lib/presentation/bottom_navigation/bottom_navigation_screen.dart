@@ -31,6 +31,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.electric_bolt),
