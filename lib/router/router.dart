@@ -1,3 +1,4 @@
+import 'package:charge_mate/presentation/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../presentation/bottom_navigation/bottom_navigation_screen.dart';
@@ -15,5 +16,10 @@ final router = GoRouter(
       path: Constants.bottomNavigationRoute,
       builder: (context, state) {
         return const BottomNavigationScreen();
+      }),
+  GoRoute(
+      path: Constants.loginRoute,
+      builder: (context, state) {
+        return const LoginScreen();
       }),
 ]);
