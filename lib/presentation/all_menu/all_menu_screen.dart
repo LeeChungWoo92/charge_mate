@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../utils/constants.dart';
 
-class AllMenuScreen extends StatelessWidget {
+class AllMenuScreen extends StatefulWidget {
   const AllMenuScreen({super.key});
+
+  @override
+  State<AllMenuScreen> createState() => _AllMenuScreenState();
+}
+
+class _AllMenuScreenState extends State<AllMenuScreen> {
+  GoogleSignInAccount? _currentUser;
+
+  Future<void> _navigateToLogin(BuildContext context) async {
+    final result = await context.push(Constants.loginRoute);
+    if (result != null && result is GoogleSignInAccount) {
+      setState(() {
+        _currentUser = result;
+        print('리턴 result : $_currentUser');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,70 +34,93 @@ class AllMenuScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: IntrinsicHeight(
+          child: InkWell(
+            highlightColor: Colors.transparent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+              _navigateToLogin(context);
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildUserInfo(),
+                _buildProfileImage(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            InkWell(
-              onTap: () {
-                context.push(Constants.loginRoute);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            '로그인이 필요합니다',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
-                          SizedBox(width: 6),
-                          Icon(
-                            Icons.keyboard_arrow_right,
-                            color: Colors.grey,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0), // 내부 패딩
-                        decoration: BoxDecoration(
-                          color: Colors.blue, // 배경색
-                          borderRadius: BorderRadius.circular(16.0), // 둥근 테두리
-                        ),
-                        child: Text(
-                          '전기차 운행으로 지구를 지켜주세요:)',
-                          style: TextStyle(
-                            fontSize: 10.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: Image.asset(
-                        'assets/images/image_default_profile.png',
-                        fit: BoxFit.cover,
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      _currentUser?.displayName != null
+                          ? '${_currentUser!.displayName}님'
+                          : '로그인이 필요합니다',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  )
-                ],
-              ),
-            )
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: const Text(
+                    '전기차 운행으로 지구를 지켜주세요:)',
+                    style: TextStyle(
+                      fontSize: 10.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ],
+    );
+  }
+
+  Widget _buildProfileImage() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(100),
+      child: SizedBox(
+        width: 60,
+        height: 60,
+        child: _currentUser?.photoUrl != null
+            ? Image.network(
+                _currentUser!.photoUrl!,
+                fit: BoxFit.cover,
+              )
+            : Image.asset(
+                'assets/images/image_default_profile.png',
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }
