@@ -1,20 +1,26 @@
+import 'package:charge_mate/presentation/login/login_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loginViewModel = context.watch<LoginViewModel>();
+    final user = loginViewModel.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            print('abc');
+            context.pop();
           },
-          icon: Icon(Icons.close),
+          icon: const Icon(Icons.close),
         ),
       ),
       body: Padding(
@@ -22,10 +28,10 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('전기차와 함께하는 모든 순간'),
+            const Text('전기차와 함께하는 모든 순간'),
             Row(
               children: [
-                Text(
+                const Text(
                   '충전메이트',
                   style: TextStyle(
                     color: Colors.blue,
@@ -42,30 +48,33 @@ class LoginScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
+            const Text(
               '지금 충전메이트에 가입하세요!',
               style: TextStyle(
                 color: Colors.grey,
               ),
             ),
-            Text(
+            const Text(
               '전기차 충전이 더 쉽고 빨라집니다.',
               style: TextStyle(
                 color: Colors.grey,
               ),
             ),
-            Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: SignInButton(
-                Buttons.Google,
-                text: '구글 계정으로 시작하기',
-                onPressed:(){
-
-                },
+            const Spacer(),
+            if (loginViewModel.isLoading) const Center(child: CircularProgressIndicator()),
+            if (!loginViewModel.isLoading)
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: SignInButton(
+                  Buttons.Google,
+                  text: '구글 계정으로 시작하기',
+                  onPressed: () async {
+                    await loginViewModel.signIn();
+                    context.pop(user);
+                  },
+                ),
               ),
-            ),
           ],
         ),
       ),
