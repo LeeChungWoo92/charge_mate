@@ -48,13 +48,34 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
       icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
       size: Size(60, 60),
     ),
+    NMarker(
+      id: '6',
+      position: NLatLng(37.56552, 126.897537),
+      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
+      size: Size(60, 60),
+    ),
+    NMarker(
+      id: '7',
+      position: NLatLng(37.56512, 126.897567),
+      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
+      size: Size(60, 60),
+    ),
+    NMarker(
+      id: '8',
+      position: NLatLng(37.516932467450326, 127.06578661133796),
+      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
+      size: Size(60, 60),
+    ),
   ];
   final List<NInfoWindow> _markersInfo = [
-    NInfoWindow.onMarker(id: '1', text: '200원'),
-    NInfoWindow.onMarker(id: '2', text: '221원'),
-    NInfoWindow.onMarker(id: '3', text: '221원'),
+    NInfoWindow.onMarker(id: '1', text: '350원'),
+    NInfoWindow.onMarker(id: '2', text: '311원'),
+    NInfoWindow.onMarker(id: '3', text: '341원'),
     NInfoWindow.onMarker(id: '4', text: '321원'),
     NInfoWindow.onMarker(id: '5', text: '324원'),
+    NInfoWindow.onMarker(id: '6', text: '364원'),
+    NInfoWindow.onMarker(id: '7', text: '374원'),
+    NInfoWindow.onMarker(id: '8', text: '375원'),
   ];
 
   @override
