@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:charge_mate/presentation/component/persistent_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../utils/geocoding_helper.dart';
 
 class ChargingMapScreen extends StatefulWidget {
   const ChargingMapScreen({super.key});
@@ -16,6 +19,7 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
   double? latitude;
   double? longitude;
   bool _isMapReady = false;
+  String address = "Fetching address...";
 
   final List<NMarker> _markers = [
     NMarker(
@@ -65,6 +69,14 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
       position: NLatLng(37.516932467450326, 127.06578661133796),
       icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
       size: Size(60, 60),
+
+    ),
+    NMarker(
+      id: '9',
+      position: NLatLng(37.51148310935, 127.06033711446),
+      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
+      size: Size(60, 60),
+
     ),
   ];
   final List<NInfoWindow> _markersInfo = [
@@ -76,18 +88,28 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
     NInfoWindow.onMarker(id: '6', text: '364원'),
     NInfoWindow.onMarker(id: '7', text: '374원'),
     NInfoWindow.onMarker(id: '8', text: '375원'),
+    NInfoWindow.onMarker(id: '9', text: '380원'),
   ];
 
   @override
   void initState() {
     super.initState();
     initMap(); // 맵 초기화 함수 호출
+    _getAddress();
   }
 
   // 비동기적으로 위치 권한과 현재 위치 정보를 얻는 함수
   Future<void> initMap() async {
     await _permission(); // 위치 권한 요청
     await getMyCurrentLocation(); // 현재 위치 요청
+  }
+
+  Future<void> _getAddress() async {
+    String result = await GeocodingHelper.getSimpleAddressFromLatLng(37.51148310935, 127.06033711446); // 위도, 경도 예시
+    setState(() {
+      address = result; // 주소 값으로 업데이트
+      print('주소: $address');
+    });
   }
 
   // 현재 위치를 가져오는 함수
@@ -121,7 +143,21 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
 
     for (int i = 0; i < _markers.length; i++) {
       _markers[i].openInfoWindow(_markersInfo[i]);
+      _markers[i].setOnTapListener((NMarker marker) {
+        print('마커클릭');
+        print(_markersInfo[i].info);
+        controller.updateCamera(NCameraUpdate.withParams(
+            target: NLatLng(_markers[i].position.latitude, _markers[i].position.longitude)));
+        showBottomSheet(
+            context: context,
+            builder: (context) {
+              return const PersistentBottomSheet();
+            });
+      });
     }
+
+    // for (int i = 0; i < _markers.length; i++) {
+    // }
   }
 
   @override
