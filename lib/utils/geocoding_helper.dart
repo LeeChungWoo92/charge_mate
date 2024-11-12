@@ -12,8 +12,8 @@ class GeocodingHelper {
       // 원하는 주소 형식으로 반환: "서울특별시 강남구 삼성동 100-3"
       return address;
     } catch (e) {
-      print('Error occurred: $e');
-      return "Address not available";
+      print('주소변환실패: $e');
+      return '주소를 찾을 수 없습니다.';
     }
   }
 }

@@ -61,7 +61,8 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            if (loginViewModel.isLoading) const Center(child: CircularProgressIndicator()),
+            if (loginViewModel.isLoading)
+              const Center(child: CircularProgressIndicator()),
             if (!loginViewModel.isLoading)
               SizedBox(
                 width: double.infinity,
@@ -71,7 +72,8 @@ class LoginScreen extends StatelessWidget {
                   text: '구글 계정으로 시작하기',
                   onPressed: () async {
                     await loginViewModel.signIn();
-                    context.pop(user);
+                    print('정보 : ${loginViewModel.currentUser}');
+                    context.pop(loginViewModel.currentUser);
                   },
                 ),
               ),

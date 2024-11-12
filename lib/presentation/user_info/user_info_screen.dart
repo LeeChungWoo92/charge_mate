@@ -1,5 +1,6 @@
 import 'package:charge_mate/presentation/user_info/user_info_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class UserInfoScreen extends StatelessWidget {
@@ -18,8 +19,10 @@ class UserInfoScreen extends StatelessWidget {
         children: [
           Center(
             child: ElevatedButton(
-              onPressed: () {
-                userInfoViewModel.signOut();
+              onPressed: () async {
+                await userInfoViewModel.signOut();
+                print('리턴 result 로그아웃 user: $user');
+                context.pop(user);
               },
               child: const Text('로그아웃'),
             ),

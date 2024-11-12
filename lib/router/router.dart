@@ -1,6 +1,7 @@
 import 'package:charge_mate/presentation/login/login_screen.dart';
 import 'package:charge_mate/presentation/login/login_view_model.dart';
 import 'package:charge_mate/presentation/user_info/user_info_screen.dart';
+import 'package:charge_mate/presentation/user_info/user_info_view_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +32,9 @@ final router = GoRouter(initialLocation: Constants.splashNavigationRoute, routes
   GoRoute(
       path: Constants.userInfoRoute,
       builder: (context, state) {
-        return const UserInfoScreen();
+        return ChangeNotifierProvider<UserInfoViewModel>(
+          create: (context) => getIt<UserInfoViewModel>(),
+          child: const UserInfoScreen(),
+        );
       }),
 ]);

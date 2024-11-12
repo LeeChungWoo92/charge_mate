@@ -19,7 +19,17 @@ class _AllMenuScreenState extends State<AllMenuScreen> {
     if (result != null && result is GoogleSignInAccount) {
       setState(() {
         _currentUser = result;
-        print('리턴 result : $_currentUser');
+        print('리턴 result 로그인 : $_currentUser');
+      });
+    }
+  }
+
+  Future<void> _navigateToLogOut(BuildContext context) async {
+    final result = await context.push(Constants.userInfoRoute);
+    if (result == null) {
+      setState(() {
+        _currentUser = result as GoogleSignInAccount?;
+        print('리턴 result 로그아웃 : $_currentUser');
       });
     }
   }
@@ -39,7 +49,11 @@ class _AllMenuScreenState extends State<AllMenuScreen> {
             highlightColor: Colors.transparent,
             onTap: () {
               FocusScope.of(context).requestFocus(FocusNode());
-              _navigateToLogin(context);
+              if (_currentUser == null) {
+                _navigateToLogin(context);
+              } else {
+                _navigateToLogOut(context);
+              }
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

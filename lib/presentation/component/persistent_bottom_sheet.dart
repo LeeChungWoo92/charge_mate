@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
 
-class PersistentBottomSheet extends StatelessWidget {
-  const PersistentBottomSheet({super.key});
+class PersistentBottomSheet extends StatefulWidget {
+  final String address;
+
+  const PersistentBottomSheet({
+    super.key,
+    required this.address,
+  });
+
+  @override
+  State<PersistentBottomSheet> createState() => _PersistentBottomSheetState();
+}
+
+class _PersistentBottomSheetState extends State<PersistentBottomSheet> {
+  late String currentAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    currentAddress = widget.address;
+  }
+
+  void updateAddress(String newAddress) {
+    setState(() {
+      currentAddress = newAddress;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +38,12 @@ class PersistentBottomSheet extends StatelessWidget {
             topRight: Radius.circular(20), // 오른쪽 위 둥글게
           ),
         ),
-        child: const Padding(
-          padding: EdgeInsets.all(16.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
                   Text(
                     '한국전기차충전서비스',
@@ -30,7 +54,7 @@ class PersistentBottomSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              Row(
+              const Row(
                 children: [
                   Text('운영시간'),
                   SizedBox(width: 6),
@@ -43,10 +67,10 @@ class PersistentBottomSheet extends StatelessWidget {
                 ],
               ),
               Text(
-                '서울특별시 삼성동 100-3',
-                style: TextStyle(
+                currentAddress,
+                style: const TextStyle(
                   fontSize: 18,
-                    color: Colors.black,
+                  color: Colors.black,
                 ),
               ),
             ],

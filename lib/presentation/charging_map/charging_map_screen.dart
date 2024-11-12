@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../data/repository/marker_repository.dart';
 import '../../utils/geocoding_helper.dart';
 
 class ChargingMapScreen extends StatefulWidget {
@@ -21,91 +22,24 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
   bool _isMapReady = false;
   String address = "Fetching address...";
 
-  final List<NMarker> _markers = [
-    NMarker(
-      id: '1',
-      position: NLatLng(37.506932467450326, 127.05578661133796),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '2',
-      position: NLatLng(37.606932467450326, 127.05578661133796),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '3',
-      position: NLatLng(37.517752, 126.886437),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '4',
-      position: NLatLng(37.527752, 126.896437),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '5',
-      position: NLatLng(37.526752, 126.897437),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '6',
-      position: NLatLng(37.56552, 126.897537),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '7',
-      position: NLatLng(37.56512, 126.897567),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-    ),
-    NMarker(
-      id: '8',
-      position: NLatLng(37.516932467450326, 127.06578661133796),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-
-    ),
-    NMarker(
-      id: '9',
-      position: NLatLng(37.51148310935, 127.06033711446),
-      icon: NOverlayImage.fromAssetImage('assets/icons/ic_charging_location.png'),
-      size: Size(60, 60),
-
-    ),
-  ];
-  final List<NInfoWindow> _markersInfo = [
-    NInfoWindow.onMarker(id: '1', text: '350원'),
-    NInfoWindow.onMarker(id: '2', text: '311원'),
-    NInfoWindow.onMarker(id: '3', text: '341원'),
-    NInfoWindow.onMarker(id: '4', text: '321원'),
-    NInfoWindow.onMarker(id: '5', text: '324원'),
-    NInfoWindow.onMarker(id: '6', text: '364원'),
-    NInfoWindow.onMarker(id: '7', text: '374원'),
-    NInfoWindow.onMarker(id: '8', text: '375원'),
-    NInfoWindow.onMarker(id: '9', text: '380원'),
-  ];
+  final List<NMarker> _markers = MarkerRepository.getMarkers();
+  final List<NInfoWindow> _markersInfo = MarkerRepository.getMarkerInfoWindows();
 
   @override
   void initState() {
     super.initState();
-    initMap(); // 맵 초기화 함수 호출
-    _getAddress();
+    initMap();
+    //_getAddress();
   }
 
-  // 비동기적으로 위치 권한과 현재 위치 정보를 얻는 함수
   Future<void> initMap() async {
     await _permission(); // 위치 권한 요청
     await getMyCurrentLocation(); // 현재 위치 요청
   }
 
-  Future<void> _getAddress() async {
-    String result = await GeocodingHelper.getSimpleAddressFromLatLng(37.51148310935, 127.06033711446); // 위도, 경도 예시
+  Future<void> _getAddress(double markerLatitude, double markerLongitude) async {
+    String result = await GeocodingHelper.getSimpleAddressFromLatLng(
+        markerLatitude, markerLongitude); // 위도, 경도 예시
     setState(() {
       address = result; // 주소 값으로 업데이트
       print('주소: $address');
@@ -145,19 +79,19 @@ class _ChargingMapScreenState extends State<ChargingMapScreen> {
       _markers[i].openInfoWindow(_markersInfo[i]);
       _markers[i].setOnTapListener((NMarker marker) {
         print('마커클릭');
-        print(_markersInfo[i].info);
+        //print(_markersInfo[i].info);
+        _getAddress(_markers[i].position.latitude, _markers[i].position.longitude);
+        print(_markers[i].position.latitude);
+        print(_markers[i].position.longitude);
         controller.updateCamera(NCameraUpdate.withParams(
             target: NLatLng(_markers[i].position.latitude, _markers[i].position.longitude)));
         showBottomSheet(
             context: context,
             builder: (context) {
-              return const PersistentBottomSheet();
+              return PersistentBottomSheet(address: address);
             });
       });
     }
-
-    // for (int i = 0; i < _markers.length; i++) {
-    // }
   }
 
   @override

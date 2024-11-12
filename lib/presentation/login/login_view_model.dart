@@ -1,38 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../data/repository/auth_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-  GoogleSignInAccount? _currentUser;
+  final AuthRepository _authRepository;
   bool _isLoading = false;
 
-  GoogleSignInAccount? get currentUser => _currentUser;
+  LoginViewModel(this._authRepository);
+
+  GoogleSignInAccount? get currentUser => _authRepository.currentUser;
 
   bool get isLoading => _isLoading;
-
-  LoginViewModel() {
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-      _currentUser = account;
-      notifyListeners();
-    });
-    _googleSignIn.signInSilently();
-  }
 
   Future<void> signIn() async {
     _setLoading(true);
     try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print('로그인 실패: $error');
+      await _authRepository.signIn();
     } finally {
       _setLoading(false);
     }
-  }
-
-  Future<void> signOut() async {
-    await _googleSignIn.disconnect();
-    _currentUser = null;
-    notifyListeners();
   }
 
   void _setLoading(bool value) {
